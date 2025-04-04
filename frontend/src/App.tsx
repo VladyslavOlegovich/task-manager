@@ -5,6 +5,7 @@ import { FilterTasks } from "./components/FilterTasks";
 import { SearchTasks } from "./components/SearchTasks";
 import { Task } from "./types/Task";
 import { TaskForm } from "./components/TaskForm";
+import { API_URL } from "./config";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -15,14 +16,14 @@ const App: React.FC = () => {
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const url = "http://localhost:3000/tasks";
-
   useEffect(() => {
     fetchTasks();
   }, [filter]);
 
   const fetchTasks = async () => {
-    const response = await axios.get(url, { params: { completed: filter } });
+    const response = await axios.get(API_URL, {
+      params: { completed: filter },
+    });
     setTasks(response.data);
   };
 
@@ -32,7 +33,7 @@ const App: React.FC = () => {
       return;
     }
     setError(null);
-    await axios.post(url, {
+    await axios.post(API_URL, {
       title,
       description,
       completed: false,
@@ -43,12 +44,12 @@ const App: React.FC = () => {
   };
 
   const updateTask = async (id: number, updates: Partial<Task>) => {
-    await axios.put(`${url}/${id}`, updates);
+    await axios.put(`${API_URL}/${id}`, updates);
     fetchTasks();
   };
 
   const deleteTask = async (id: number) => {
-    await axios.delete(`${url}/${id}`);
+    await axios.delete(`${API_URL}/${id}`);
     fetchTasks();
   };
 
